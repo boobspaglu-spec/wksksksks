@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For Charu Sharma</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Playfair+Display:ital,wght=0,500;0,700&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <style>
+        :root { --heart-red: #ff335c; --soft-pink: #ffccd5; --gold: #dfb76c; --glass: rgba(15, 15, 25, 0.7); }
+        body, html { margin: 0; padding: 0; font-family: 'Poppins', sans-serif; background: #05050a; overflow: hidden; height: 100vh; color: #fff; }
+        #star-container { position: fixed; inset: 0; z-index: 1; pointer-events: none; }
+        .star { position: absolute; background: white; border-radius: 50%; animation: twinkle var(--t) infinite ease-in-out; }
+        @keyframes twinkle { 0%, 100% { opacity: 0.2; transform: scale(0.8); } 50% { opacity: 0.9; transform: scale(1.2); } }
+        button, .pulse-btn { 
+            background: rgba(255, 255, 255, 0.05); color: #fff; border: 1px solid rgba(223, 183, 108, 0.3); 
+            padding: 12px 35px; border-radius: 30px; cursor: pointer; backdrop-filter: blur(10px); font-size: 0.85rem; 
+            letter-spacing: 1px; transition: all 0.4s ease; margin: 15px 0; z-index: 1000; outline: none;
+        }
+        button:hover, .pulse-btn:hover { background: var(--heart-red); border-color: transparent; box-shadow: 0 8px 25px rgba(255, 51, 92, 0.4); transform: translateY(-2px); }
+        .page { position: absolute; inset: 0; display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 10; padding: 24px; text-align: center; box-sizing: border-box; background: radial-gradient(circle at center, rgba(10,10,20,0.4) 0%, #05050a 100%); }
+        .active { display: flex; }
+        .glass-card { background: var(--glass); backdrop-filter: blur(20px); padding: 30px 24px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.08); max-width: 440px; width: 100%; box-sizing: border-box; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+        h1.premium-title { font-family: 'Playfair Display', serif; font-weight: 700; color: var(--soft-pink); font-size: 2.2rem; margin: 0 0 10px 0; text-shadow: 0 4px 20px rgba(255,204,213,0.2); }
+        .gold-bracket-text { font-size: 0.88rem; max-width: 400px; line-height: 1.6; color: #b0b0c0; margin: 25px auto; animation: goldGlow 4s infinite ease-in-out; }
+        @keyframes goldGlow { 0%, 100% { text-shadow: 0 0 0px transparent; color: #b0b0c0; } 50% { text-shadow: 0 0 8px rgba(223,183,108,0.3); color: #dfb76c; } }
+        .balloon-container { display: flex; gap: 14px; justify-content: center; align-items: center; margin: 25px 0; min-height: 90px; }
+        .svg-heart-balloon { width: 55px; height: 55px; cursor: pointer; transform-origin: center bottom; animation: floatHeart var(--ft) infinite ease-in-out; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes floatHeart { 0%, 100% { transform: translateY(0) rotate(-2deg); } 50% { transform: translateY(-12px) rotate(2deg); } }
+        .revealed-letter { font-family: 'Cinzel Decorative', cursive; font-size: 1.2rem; color: var(--gold); font-weight: 700; text-shadow: 0 0 8px var(--gold); }
+        .dynamic-flow-section { margin-top: 20px; width: 100%; max-width: 400px; display: none; opacity: 0; }
+        .fingerprint-sensor { width: 75px; height: 75px; border: 1px solid rgba(223, 183, 108, 0.4); border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; font-size: 32px; background: rgba(223,183,108,0.03); margin: 20px auto; position: relative; overflow: hidden; }
+        .fingerprint-sensor::after { content: ''; position: absolute; left: 0; width: 100%; height: 2px; background: var(--heart-red); top: 0; animation: scanLine 2.5s linear infinite; }
+        @keyframes scanLine { 0%, 100% { top: 0%; } 50% { top: 100%; } }
+        .fingerprint-sensor:active { background: rgba(255, 51, 92, 0.1); border-color: var(--heart-red); transform: scale(0.95); }
+        .drawing-frame { width: 280px; height: 280px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; margin: 20px auto; display: none; opacity: 0; overflow: hidden; }
+        .custom-input-line { background: transparent; border: none; border-bottom: 1px solid rgba(255,255,255,0.3); color: white; text-align: center; font-size: 1.1rem; outline: none; padding: 10px; width: 80%; transition: border 0.3s; }
+        .custom-input-line:focus { border-bottom-color: var(--gold); }
+        .envelope-wrapper { position: relative; width: 220px; height: 140px; background: #ffffff; border-radius: 4px; cursor: pointer; display: flex; justify-content: center; align-items: center; box-shadow: 0 15px 40px rgba(0,0,0,0.5); margin: 30px auto; }
+        .envelope-wrapper:before { content: ''; position: absolute; top: 0; width: 0; height: 0; border-top: 80px solid #ffccd5; border-left: 110px solid transparent; border-right: 110px solid transparent; z-index: 2; transition: transform 0.6s ease; transform-origin: top; }
+        .open-envelope:before { transform: rotateX(180deg); z-index: 0; }
+        .seal { position: absolute; width: 44px; height: 44px; background: #700b3f; border-radius: 50%; z-index: 3; display: flex; justify-content: center; align-items: center; color: var(--gold); font-family: 'Cinzel Decorative'; font-size: 18px; box-shadow: 0 0 12px rgba(223,183,108,0.5); }
+        #type-box { line-height: 1.7; font-size: 0.88rem; color: #e2e2ec; overflow-y: auto; max-height: 280px; text-align: left; }
+        #type-box::-webkit-scrollbar { width: 3px; }
+        #type-box::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); }
+        #fw-canvas { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+        #final-text { font-family: 'Playfair Display', serif; font-size: 3.5rem; font-weight: 700; color: #fff; opacity: 0; z-index: 10; text-shadow: 0 0 25px var(--heart-red); transform: scale(0.9); }
+        .music-toggle { position: fixed; top: 20px; right: 20px; z-index: 9999; background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255,255,255,0.15); border-radius: 50%; width: 42px; height: 42px; display: flex; justify-content: center; align-items: center; cursor: pointer; color: white; backdrop-filter: blur(5px); }
+    </style>
+</head>
+<body>
+    <audio id="bgMusic" loop><source src="music.mp3" type="audio/mpeg"></audio>
+    <button class="music-toggle" onclick="toggleMusic()">🎵</button>
+    <div id="star-container"></div>
+
+    <div id="page1" class="page" style="opacity: 0;">
+        <h1 class="premium-title">WELCOME CHARU SHARMAAAA</h1>
+        <p class="gold-bracket-text">(paragraphs na likhne the I just wanted to make u feel special nd ye bekar si website me bhut time lag gya because kabhi kisi ke liye na kra ik cringe h but okay ISSOKE)</p>
+        <button class="pulse-btn" onclick="startExperience()">Enter ✨</button>
+    </div>
+
+    <div id="page2" class="page">
+        <h1 class="premium-title" style="font-size: 1.8rem;">Pop the Hearts</h1>
+        <div class="balloon-container" id="b-container"></div>
+        <div class="dynamic-flow-section" id="sec-decline-1">
+            <div class="glass-card">
+                <h3 style="color: var(--heart-red); margin: 0 0 5px 0;">Access Declined</h3>
+                <p style="font-size: 0.82rem; color: #aaa; margin: 0 0 15px 0;">Authentication chain broken. Verification needed.</p>
+                <button onclick="advanceInternalFlow(2)" style="margin:0; padding:8px 25px;">Try Again</button>
+            </div>
+        </div>
+        <div class="dynamic-flow-section" id="sec-decline-2">
+            <div class="glass-card">
+                <h3 style="color: var(--heart-red); margin: 0 0 5px 0;">Access Blocked</h3>
+                <div class="fingerprint-sensor" onmousedown="startScan()" onmouseup="endScan()" ontouchstart="startScan()" ontouchend="endScan()">✋</div>
+                <p style="color: var(--gold); font-size: 0.82rem; margin: 5px 0 0 0;">only meri chamar can enter</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="page3" class="page">
+        <h1 id="effort-title" class="premium-title" style="opacity:0; filter:blur(8px);">MY LITTLE EFFORT</h1>
+        <div class="drawing-frame" id="dFrame"><img src="1000039714.jpg" alt="Drawing" style="width:100%; height:100%; object-fit:cover;"></div>
+        <div style="margin-top: 15px; width: 100%;">
+            <button id="drawShowBtn" onclick="handleDrawingDecline()">Show ✨</button>
+            <div id="please-input-area" style="display: none; opacity: 0;">
+                <p style="color: var(--heart-red); font-size: 1rem; margin: 0 0 15px 0;" id="hint-msg">chal please bol 😈</p>
+                <input type="text" id="please-text" placeholder="Type here..." class="custom-input-line"><br>
+                <button onclick="verifyPleaseToken()" style="padding: 8px 25px; margin-top: 15px;">Submit</button>
+            </div>
+        </div>
+        <button id="nextBtn3" style="display: none; margin-top: 15px;" onclick="changePage(4)">Aage Chalo ❤️</button>
+    </div>
+
+    <div id="page4" class="page">
+        <div id="envelope-scene">
+            <h1 class="premium-title" style="font-size: 1.8rem;">One Last Letter...</h1>
+            <div class="envelope-wrapper" id="env" onclick="openLetter()"><div class="seal">C</div></div>
+        </div>
+        <div class="glass-card" id="letter-card" style="display: none; opacity: 0;">
+            <h2 class="premium-title" style="font-size: 1.6rem; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px;">Charu ❤️</h2>
+            <div id="type-box"></div>
+            <button id="nextBtn4" style="display: none; margin: 15px auto 0 auto;" onclick="startFinalFireworks()">Goodbye ❤️</button>
+        </div>
+    </div>
+
+    <div id="page5" class="page"><canvas id="fw-canvas"></canvas><div id="final-text">THE END</div></div>
+
+    <script>
+        const music = document.getElementById('bgMusic'); let musicPlaying = false;
+        function toggleMusic() { if(musicPlaying) music.pause(); else music.play().catch(()=>{}); musicPlaying = !musicPlaying; }
+        function initStars() {
+            const container = document.getElementById('star-container');
+            for (let i = 0; i < 70; i++) {
+                const star = document.createElement('div'); star.className = 'star'; const s = (Math.random() * 1.5 + 0.5) + 'px';
+                star.style.width = s; star.style.height = s; star.style.left = Math.random() * 100 + 'vw'; star.style.top = Math.random() * 100 + 'vh';
+                star.style.setProperty('--t', (Math.random() * 3 + 2) + 's'); container.appendChild(star);
+            }
+        }
+        window.onload = () => { initStars(); setTimeout(() => gsap.to("#page1", { opacity: 1, duration: 1 }), 2000); };
+        function startExperience() { music.play().catch(()=>{}); musicPlaying = true; changePage(2); buildBalloons(); }
+        function changePage(n) {
+            const curr = document.querySelector('.page.active'); const next = document.getElementById('page'+n);
+            gsap.to(curr, { opacity: 0, y: -10, duration: 0.4, onComplete: () => {
+                curr.classList.remove('active'); next.classList.add('active');
+                gsap.fromTo(next, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.5 });
+                if(n === 3) gsap.to("#effort-title", { opacity: 1, filter: "blur(0px)", duration: 1 });
+            }});
+        }
+        const bData = [{m:'I',c:'#ff335c'},{m:'love',c:'#ff5c7c'},{m:'you',c:'#ff859d'},{m:'meri',c:'#ffadc0'},{m:'chamar',c:'#ffd6e0'}]; let poppedCount = 0;
+        function buildBalloons() {
+            const container = document.getElementById('b-container');
+            bData.forEach((b, idx) => {
+                const bEl = document.createElement('div'); bEl.className = 'svg-heart-balloon'; bEl.style.setProperty('--ft', (Math.random() * 1 + 2) + 's');
+                bEl.innerHTML = `<svg viewBox="0 0 32 29.6" width="100%" height="100%"><path d="M23.6,0c-3.4,0-6.3,2.7-7.6,5.6C14.7,2.7,11.8,0,8.4,0C3.8,0,0,3.8,0,8.4c0,9.4,9.5,11.9,16,21.2c6.1-9.3,16-12.1,16-21.2C32,3.8,28.2,0,23.6,0z" fill="${b.c}"/></svg>`;
+                bEl.onclick = () => {
+                    if(idx === poppedCount) {
+                        confetti({ particleCount: 20, spread: 35, origin: { x: bEl.getBoundingClientRect().left/window.innerWidth, y: bEl.getBoundingClientRect().top/window.innerHeight } });
+                        bEl.onclick = null; bEl.innerHTML = `<span class="revealed-letter">${b.m}</span>`; poppedCount++;
+                        if(poppedCount === 5) setTimeout(() => advanceInternalFlow(1), 500);
+                    }
+                }; container.appendChild(bEl);
+            });
+        }
+        function advanceInternalFlow(step) {
+            const id = step === 1 ? '#sec-decline-1' : '#sec-decline-2';
+            if(step === 2) gsap.set("#sec-decline-1", {display:'none'});
+            const target = document.querySelector(id); target.style.display = 'block'; gsap.to(target, { opacity: 1, duration: 0.4 });
+        }
+        let scanTimer; function startScan() { scanTimer = setTimeout(() => changePage(3), 1400); } function endScan() { clearTimeout(scanTimer); }
+        function handleDrawingDecline() {
+            alert("Access Declined");
+            gsap.to("#drawShowBtn", { opacity: 0, duration: 0.2, onComplete: () => {
+                document.getElementById('drawShowBtn').style.display = 'none';
+                const area = document.getElementById('please-input-area'); area.style.display = 'block'; gsap.to(area, { opacity: 1, duration: 0.3 });
+            }});
+        }
+        function verifyPleaseToken() {
+            if(document.getElementById('please-text').value.trim().toLowerCase() === "please") {
+                gsap.to("#please-input-area", { opacity: 0, duration: 0.3, onComplete: () => {
+                    document.getElementById('please-input-area').style.display = 'none';
+                    const frame = document.getElementById('dFrame'); frame.style.display = 'block';
+                    gsap.to(frame, { opacity: 1, duration: 0.5, onComplete: () => document.getElementById('nextBtn3').style.display = 'inline-block' });
+                }});
+            } else {
+                document.getElementById('hint-msg').innerText = "Sahi se please bol! 😈";
+                gsap.fromTo("#please-text", { x: -5 }, { x: 5, duration: 0.05, repeat: 5, yoyo: true });
+            }
+        }
+        function openLetter() {
+            document.getElementById('env').classList.add('open-envelope');
+            gsap.to("#envelope-scene", { opacity: 0, duration: 0.4, delay: 0.5, onComplete: () => {
+                document.getElementById('envelope-scene').style.display = 'none';
+                const card = document.getElementById('letter-card'); card.style.display = 'block'; gsap.to(card, { opacity: 1, duration: 0.4, onComplete: runTypewriter });
+            }});
+        }
+        function runTypewriter() {
+            const rawMsg = `first of all I'm very sorry maine teri mental health barbad krdi.. ye website isliye hi banaya just to do something for you... I just wanted to do something for you after everything bhut royi h tu and just I want to make you smile you're my everything afterall \n\nso maine discuss kr hi liya hoga ab tak saudi jane vali chij ka jab mai ye website banara hu maine Tereko message nahi kra h nd I'm very very sorry... mai tere sath permanent na reh sakta destiny has planned something else for us ig we're not meant to be together .. i always loved u hadse jada you were my everything literally everything nd now I've to go.. I've to go ik tu jane na degi ik you but mai reh na sakta sathme.. i got responsibilities charu and ham sathme bhi na reh sakte so please let's end this on our good terms.. bhut roo chuki tu\n\nthis one last time just smile and say goodbye ash chamar .. maybe in another life  ham sathme hoge ( sounds so cringe but ha ) socha nhi tha I'll let you go merese dur kabhi bhi but... I've to? ig?  I'll always remember you.. and you were best har chij me starting to end.. thank you for everything literally everything har ek chij ke liye`;
+            let ptr = 0; const box = document.getElementById("type-box");
+            function loop() {
+                if (ptr < rawMsg.length) {
+                    if (rawMsg.substring(ptr, ptr+2) === "\n\n") { box.innerHTML += "<br><br>"; ptr += 2; }
+                    else if (rawMsg.charAt(ptr) === "\n") { box.innerHTML += "<br>"; ptr++; }
+                    else { box.innerHTML += rawMsg.charAt(ptr); ptr++; }
+                    box.scrollTop = box.scrollHeight; setTimeout(loop, 25);
+                } else { document.getElementById("nextBtn4").style.display = "block"; }
+            } loop();
+        }
+        const canvas = document.getElementById('fw-canvas'); const ctx = canvas.getContext('2d'); let particles = []; let rockets = [];
+        function startFinalFireworks() { changePage(5); canvas.width = window.innerWidth; canvas.height = window.innerHeight; setInterval(() => rockets.push({x:Math.random()*canvas.width, y:canvas.height, ty:Math.random()*canvas.height*0.4, s:6}), 500); requestAnimationFrame(fLoop); setTimeout(() => gsap.to("#final-text", { opacity: 1, scale: 1, duration: 1.5 }), 2000); }
+        function fLoop() {
+            ctx.fillStyle = 'rgba(5,5,10,0.2)'; ctx.fillRect(0,0,canvas.width,canvas.height);
+            rockets = rockets.filter(r => { r.y -= r.s; if(r.y <= r.ty) { for(let i=0;i<30;i++) particles.push({x:r.x,y:r.y,a:Math.random()*Math.PI*2,v:Math.random()*4+2,al:1,d:Math.random()*0.015+0.01}); return false; } ctx.fillStyle="#fff"; ctx.fillRect(r.x,r.y,2,2); return true; });
+            particles = particles.filter(p => { p.x+=Math.cos(p.a)*p.v; p.y+=Math.sin(p.a)*p.v+0.05; p.al-=p.d; ctx.fillStyle=`rgba(255,51,92,${p.al})`; ctx.fillRect(p.x,p.y,2,2); return p.al>0; });
+            requestAnimationFrame(fLoop);
+        }
+    </script>
+</body>
+</html>
